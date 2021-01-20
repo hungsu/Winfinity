@@ -13,25 +13,29 @@ ShellMessage( wParam,lParam ) {
   {
     NewID := lParam
     appsOpenToMove.push(%NewID%)
-    SetTimer, HandleNewWindow, -1
+    SetTimer, ArrangeWindows, -1
+  }
+  If ( wParam = 2 ) ;  HSHELL_WINDOWDESTROYED := 2
+  {
+    SetTimer, ArrangeWindows, -1
   }
 }
 
-HandleNewWindow:
-  AvailableWidth := 2560
-  ; AvailableWidth := A_ScreenWidth
+ArrangeWindows:
+  SysGet, MonitorWorkArea, MonitorWorkArea
+  AvailableWidth := MonitorWorkAreaRight
   ; This height seems to sometimes be wrong? Probably Windows 10's fault.
-  ScreenHeightMinusTaskbar := 1400
+  ScreenHeightMinusTaskbar := MonitorWorkAreaBottom
   WinGet appsOpen, List
-appsOpenToMove := []
-Loop %appsOpen%
-{
-  id := appsOpen%A_Index%
-  WinGetClass wc, ahk_id %id%
-  WinGetTitle wt, ahk_id %id%
-  if wc in Chrome_WidgetWin_1,MozillaWindowClass,CabinetWClass,Qt5152QWindowOwnDCIcon,Viber
-    appsOpenToMove.push(id)
-}
+  appsOpenToMove := []
+  Loop %appsOpen%
+  {
+    id := appsOpen%A_Index%
+    WinGetClass wc, ahk_id %id%
+    WinGetTitle wt, ahk_id %id%
+    if wc in Chrome_WidgetWin_1,MozillaWindowClass,CabinetWClass,Qt5152QWindowOwnDCIcon,Viber
+      appsOpenToMove.push(id)
+  }
   Index := appsOpenToMove.Length()
   Index := 1
   Loop 3
@@ -45,12 +49,14 @@ Loop %appsOpen%
   }
 Return
 
+HandleCloseWindow:
+  TrayTip, Window closed, %lParam%
+Return
+
 ; When Win+Backspace pressed
 #BackSpace::
 ; Kill current window
   WinKill A
-; Move other windows right
-  SetTimer, HandleNewWindow, -1
 return
 
 ; When Win+N pressed
