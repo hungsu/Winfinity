@@ -10,29 +10,47 @@ Return
 ShellMessage( wParam,lParam ) {
   Local k
   If ( wParam = 1 ) ;  HSHELL_WINDOWCREATED := 1
-     {
-       NewID := lParam
-       SetTimer, MsgBox, -1
-     }
-     ; When new window created: move it to top right corner, consume full height, move other windows to left
+  {
+    NewID := lParam
+    appsOpenToMove.push(%NewID%)
+    SetTimer, HandleNewWindow, -1
+  }
 }
 
-MsgBox:
- ; This height seems to sometimes be wrong? Probably Windows 10's fault.
- ScreenHeightMinusTaskbar := 1400
- WinGetTitle, Title, ahk_id %NewID%
- WinGetPos, , , WinWidth, , %Title%
- ; Width of screen minus width of window
- WinXPosition := A_ScreenWidth - WinWidth
- WinMove %Title%,, %WinXPosition%, 0, , ScreenHeightMinusTaskbar
- ;How to get list of other windows?
+HandleNewWindow:
+  AvailableWidth := 2560
+  ; AvailableWidth := A_ScreenWidth
+  ; This height seems to sometimes be wrong? Probably Windows 10's fault.
+  ScreenHeightMinusTaskbar := 1400
+  WinGet appsOpen, List
+appsOpenToMove := []
+Loop %appsOpen%
+{
+  id := appsOpen%A_Index%
+  WinGetClass wc, ahk_id %id%
+  WinGetTitle wt, ahk_id %id%
+  if wc in Chrome_WidgetWin_1,MozillaWindowClass,CabinetWClass,Qt5152QWindowOwnDCIcon,Viber
+    appsOpenToMove.push(id)
+}
+  Index := appsOpenToMove.Length()
+  Index := 1
+  Loop 3
+  {
+    appId := appsOpenToMove[Index]
+    WinGetPos, , , WinWidth, , ahk_id %appId%
+    WinXPosition := AvailableWidth - WinWidth
+    WinMove ahk_id %appId%,, %WinXPosition%, 0, , ScreenHeightMinusTaskbar
+    AvailableWidth := WinXPosition
+    Index := Index + 1
+  }
 Return
 
 ; When Win+Backspace pressed
 #BackSpace::
 ; Kill current window
-WinKill A
+  WinKill A
 ; Move other windows right
+  SetTimer, HandleNewWindow, -1
 return
 
 ; When Win+N pressed
