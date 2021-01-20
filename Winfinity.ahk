@@ -12,8 +12,12 @@ ShellMessage( wParam,lParam ) {
   If ( wParam = 1 ) ;  HSHELL_WINDOWCREATED := 1
   {
     NewID := lParam
-    appsOpenToMove.push(%NewID%)
-    SetTimer, ArrangeWindows, -1
+    WinGetClass wc, ahk_id %NewID%
+    if wc in Chrome_WidgetWin_1,MozillaWindowClass,CabinetWClass,Qt5152QWindowOwnDCIcon,Viber
+    {
+      appsOpenToMove.push(%NewID%)
+      SetTimer, ArrangeWindows, -1
+    }
   }
   If ( wParam = 2 ) ;  HSHELL_WINDOWDESTROYED := 2
   {
@@ -36,7 +40,6 @@ ArrangeWindows:
     if wc in Chrome_WidgetWin_1,MozillaWindowClass,CabinetWClass,Qt5152QWindowOwnDCIcon,Viber
       appsOpenToMove.push(id)
   }
-  Index := appsOpenToMove.Length()
   Index := 1
   Loop 3
   {
@@ -57,6 +60,11 @@ Return
 #BackSpace::
 ; Kill current window
   WinKill A
+return
+
+; When Win+Enter pressed
+#Enter::
+  SetTimer, ArrangeWindows, -1
 return
 
 ; When Win+N pressed
