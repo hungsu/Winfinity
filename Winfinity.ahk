@@ -13,7 +13,7 @@ ShellMessage( wParam,lParam ) {
   {
     NewID := lParam
     WinGetClass wc, ahk_id %NewID%
-    if wc in Chrome_WidgetWin_1,MozillaWindowClass,CabinetWClass,Qt5152QWindowOwnDCIcon,Viber
+    if wc in Chrome_WidgetWin_1,MozillaWindowClass,CabinetWClass,Qt5152QWindowOwnDCIcon,Viber,FM
     {
       appsOpenToMove.push(%NewID%)
       SetTimer, ArrangeWindows, -1
@@ -37,7 +37,7 @@ ArrangeWindows:
     id := appsOpen%A_Index%
     WinGetClass wc, ahk_id %id%
     WinGetTitle wt, ahk_id %id%
-    if wc in Chrome_WidgetWin_1,MozillaWindowClass,CabinetWClass,Qt5152QWindowOwnDCIcon,Viber
+    if wc in Chrome_WidgetWin_1,MozillaWindowClass,CabinetWClass,Qt5152QWindowOwnDCIcon,Viber,FM
       appsOpenToMove.push(id)
   }
   Index := 1
@@ -50,10 +50,6 @@ ArrangeWindows:
     AvailableWidth := WinXPosition
     Index := Index + 1
   }
-Return
-
-HandleCloseWindow:
-  TrayTip, Window closed, %lParam%
 Return
 
 ; When Win+Backspace pressed
