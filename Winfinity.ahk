@@ -1,3 +1,5 @@
+#Include .\WinEvents.ahk
+
 #Persistent
 Gui +LastFound
 hWnd := WinExist()
@@ -5,6 +7,7 @@ hWnd := WinExist()
 DllCall( "RegisterShellHookWindow", UInt,hWnd )
 MsgNum := DllCall( "RegisterWindowMessage", Str,"SHELLHOOK" )
 OnMessage( MsgNum, "ShellMessage" )
+HookEvent("WinEventProc", [EVENT_SYSTEM_MOVESIZEEND,EVENT_SYSTEM_MINIMIZEEND])
 Return
 
 ShellMessage( wParam,lParam ) {
@@ -13,9 +16,10 @@ ShellMessage( wParam,lParam ) {
   {
     NewID := lParam
     WinGetClass wc, ahk_id %NewID%
-    if wc in Chrome_WidgetWin_1,MozillaWindowClass,CabinetWClass,Qt5152QWindowOwnDCIcon,Viber,FM
+    if wc in Chrome_WidgetWin_1,MozillaWindowClass,CabinetWClass,Qt5152QWindowOwnDCIcon,Viber,FM,vguiPopupWindow
     {
-      appsOpenToMove.push(%NewID%)
+      ; appsOpenToMove.push(%NewID%)
+      WinActivate, %NewID%, , ,
       SetTimer, ArrangeWindows, -1
     }
   }
@@ -23,6 +27,12 @@ ShellMessage( wParam,lParam ) {
   {
     SetTimer, ArrangeWindows, -1
   }
+}
+
+
+WinEventProc(hHook, event, hwnd, idObject, idChild, dwEventThread, dwmsEventTime) {
+  SetTimer, ArrangeWindows, -1
+  return 0
 }
 
 ArrangeWindows:
@@ -37,7 +47,7 @@ ArrangeWindows:
     id := appsOpen%A_Index%
     WinGetClass wc, ahk_id %id%
     WinGetTitle wt, ahk_id %id%
-    if wc in Chrome_WidgetWin_1,MozillaWindowClass,CabinetWClass,Qt5152QWindowOwnDCIcon,Viber,FM
+    if wc in Chrome_WidgetWin_1,MozillaWindowClass,CabinetWClass,Qt5152QWindowOwnDCIcon,Viber,FM,vguiPopupWindow
       appsOpenToMove.push(id)
   }
   Index := 1
