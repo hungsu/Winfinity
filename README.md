@@ -1,5 +1,5 @@
 # Winfinity-AHK
-Winfinity is a window manager for Windows, inspired by projects such as [10GUI](https://youtu.be/zWz1KbknIZk?t=146), [Andy Matuschak's Notes](https://notes.andymatuschak.org/About_these_notes), and [PaperWM](https://github.com/paperwm/PaperWM)
+Winfinity is a window manager for Windows, inspired by projects such as [10GUI](https://youtu.be/zWz1KbknIZk?t=146), [Andy Matuschak's Notes](https://notes.andymatuschak.org/About_these_notes), and [PaperWM](https://github.com/paperwm/PaperWM). It allows you to think of your desktop as an infinite horizontal workspace, instead of a fixed rectangle bounded by your screen.
 
 What it does:
 - All supported application windows take up full height of the screen, and do not overlap each other
